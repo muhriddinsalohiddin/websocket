@@ -8,36 +8,17 @@ import (
 )
 
 
-func Login (c *gin.Context) {
-
-	user := models.User{} 
-	login := models.User{} 
-	db, err := utils.DB()
-	c.BindJSON(&login)
-	if err != nil {
-		log.Print(err)
-	}
-	
-	db.Where("email=? and password = ?",login.Email,login.Password).Find(&user)
-	if user.Email == "" {
-
-		c.String(400,"Wrong email or password")
-	}else{
-
-		c.String(200,utils.CreateToken(user))
-	}
-
-}
-
 func Register (c *gin.Context) {
-	var reg models.User
-	var user models.User
-	c.BindJSON(&reg)
+
 	db, err := utils.DB()
 
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	var reg,user models.User
+	
+	c.BindJSON(&reg)
 
 	db.Select("email").Where("email = ?",reg.Email).Find(&user)
 
@@ -58,7 +39,31 @@ func Register (c *gin.Context) {
 
 }
 
+func Login (c *gin.Context) {
+
+	db, err := utils.DB()
+	
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var user,login models.User
+
+	c.BindJSON(&login)
+	
+	db.Where("email=? and password = ?",login.Email,login.Password).Find(&user)
+	if user.Email == "" {
+
+		c.String(400,"Wrong email or password")
+	}else{
+
+		c.String(200,utils.CreateToken(user))
+	}
+
+}
+
 func Change(c *gin.Context) {
+
 	var UpdateUser,checkuser models.ChangeUser
 	var user models.User
 	c.BindJSON(&UpdateUser)
@@ -82,5 +87,5 @@ func Change(c *gin.Context) {
 	
 	db.Model(&models.User{}).Where("email = ?",UpdateUser.Email).Find(&user)
 
-	c.JSON(200,user)
+	c.String(200,utils.CreateToken(user))
 }

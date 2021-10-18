@@ -2,6 +2,8 @@ package models
 
 import (
 	"time"
+	jwt "github.com/dgrijalva/jwt-go"
+	
 )
 
 type User struct {
@@ -15,4 +17,9 @@ type ChangeUser struct {
 	Email string		`json:"email"`
 	Password string		`json:"password"`
 	NewPassword string	`json:"newPassword"`
+}
+
+type Token struct {
+	Email string
+	jwt.StandardClaims
 }

@@ -14,13 +14,14 @@ func WebSocket(c *gin.Context){
 	
 		c.String(400,"Bunday token yo'q")
 		return
-	}else {
+
+	} else {
+
 		webSocketRouter := melody.New()
 
 		webSocketRouter.Upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 
 
-		webSocketRouter.HandleRequest(c.Writer, c.Request)
 
 		webSocketRouter.HandleMessage(func (s *melody.Session, m []byte) {
 			webSocketRouter.Broadcast(m)
